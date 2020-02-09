@@ -1,0 +1,126 @@
+html, body {
+  font-family: 'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif;
+  height: 100%;
+}
+
+video {
+  height: 100%;
+  width: 100%;
+}
+
+#footer, .push {
+  height: 60px;
+  padding-left: 2%;
+  padding-right: 2%;
+}
+
+.container-fluid {
+  padding: 1% 2%;
+  min-height: 85%;
+}
+
+#codait-logo {
+  min-width: 162px;
+  min-height: 150px;
+}
+
+#codait-logo img {
+  width: 162px;
+  height: 150px;
+}
+
+.title-section h1 {
+  margin-top: 10px;
+}
+
+.ibm-code .btn-primary {
+  background-color: #26A8A2;
+  border-color: #32A8A3;
+  white-space: normal;
+}
+
+.ibm-code .btn-primary:hover {
+  background-color: #1E8B87;
+  border-color: #2D8B89;
+}
+
+.info-icon {
+  font-size: 14px;
+  font-weight: bold;
+  cursor: help;
+}
+ 
+#threshold-range {
+  margin: 15px 0;
+  width: 100%;
+}
+
+#image-display {
+  position: relative;
+}
+
+#image-display img {
+  max-width: 100%;
+}
+
+#image-canvas {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 2;
+}
+
+.label-icon {
+  display: none;
+  margin: 2px;
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+}
+
+.hide-label {
+  opacity: 0.4;
+}
+
+  .pipe-navbar .navbar-nav-scroll {
+    max-width: 100%;
+    height: 2.4rem;
+
+    overflow: hidden;
+  }
+
+
+@media (max-width: 991.98px) {
+
+
+  .pipe-navbar .navbar-nav-scroll .navbar-nav {
+    padding-bottom: 2rem;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+@media (min-width: 768px) {
+  @supports ((position: -webkit-sticky) or (position:sticky)) {
+    .pipe-navbar {
+      position: -webkit-sticky;
+      position: sticky;
+      top: 0;
+      z-index: 1071;
+
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .navbar-nav-scroll {
+    overflow-x: auto;
+    white-space: nowrap;
+    overflow: hidden;
+    font-size: 0.875rem;
+    -webkit-overflow-scrolling: touch;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "name": "max-object-detector-web-app",
+  "version": "1.0.0",
+  "description": "A web app utilizing the [MAX Object Detector](https://github.com/IBM/MAX-Object-Detector) model",
+  "main": "app.js",
+  "scripts": {
+    "test": "eslint --ignore-pattern *.min.js ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IBM/MAX-Object-Detector-Web-App.git"
+  },
+  "author": "Alex Bozarth",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/IBM/MAX-Object-Detector-Web-App/issues"
+  },
+  "homepage": "https://github.com/IBM/MAX-Object-Detector-Web-App#readme",
+  "dependencies": {
+    "@okta/oidc-middleware": "^3.0.0",
+    "body-parser": "^1.19.0",
+    "ejs": "^3.0.1",
+    "express": "^4.16.3",
+    "express-session": "^1.17.0",
+    "request": "^2.87.0",
+    "request-promise": "^4.2.5",
+    "yargs": "^11.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^6.0.0",
+    "eslint-config-strongloop": "^2.1.0"
+  }
+}
