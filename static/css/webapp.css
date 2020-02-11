@@ -16,17 +16,7 @@ video {
 
 .container-fluid {
   padding: 1% 2%;
-  min-height: 85%;
-}
-
-#codait-logo {
-  min-width: 162px;
-  min-height: 150px;
-}
-
-#codait-logo img {
-  width: 162px;
-  height: 150px;
+  min-height: 100%;
 }
 
 .title-section h1 {
@@ -42,6 +32,10 @@ video {
 .ibm-code .btn-primary:hover {
   background-color: #1E8B87;
   border-color: #2D8B89;
+}
+
+.card {
+  margin-bottom: 10px;
 }
 
 .info-icon {

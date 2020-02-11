@@ -117,6 +117,24 @@ function paintLabelText(i, ctx, can) {
   ctx.fillText(text, x + 1, y);
 }
 
+function populateLabelIcons() {
+  var labelIcons_list = [];
+  for (var i = 0; i < predictions.length; i++) {
+    var label_id = predictions[i]['label_id'];
+    if(labelIcons_list.includes(label_id)) {
+      continue;
+    } else {
+      labelIcons_list.push(label_id);
+      $('#label-icons').append($('<img>', {
+        class: 'label-icon',
+        id: 'label-icon-' + label_id,
+        title: predictions[i]['label'],
+        src: '/img/cocoicons/' + label_id + '.jpg',
+      }));
+    }
+  }
+}
+
 function dataURItoBlob(dataURI) {
     // convert base64 to raw binary data held in a string
     // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
@@ -146,15 +164,6 @@ async function submitImageInput(event) {
     $('#image-display').html(''); // replaces previous img and canvas
     predictions = []; // remove any previous metadata
     updateLabelIcons(); // reset label icons
-
-    //need to change this part when object detector endpoint is fixed
-    try {
-      var quota = document.getElementById('quota').innerText;
-      document.getElementById('quota').innerText = Math.max(0, parseInt(quota)-1);
-    }
-    catch(err) {
- 
-    }
 
     // Create form data
     var form = await event.target;
@@ -284,7 +293,15 @@ function sendImage(data) {
     dataType: 'json',
     success: function(data) {
       predictions = data['predictions'];
+      populateLabelIcons();
       paintCanvas();
+      try {
+        var quota = document.getElementById('quota').innerText;
+        document.getElementById('quota').innerText = Math.max(0, parseInt(quota)-1);
+      }
+      catch(err) {
+
+      }
       if (predictions.length === 0) {
         alert('No Objects Detected');
       }
@@ -311,7 +328,7 @@ $(function() {
   $('#file-upload').on('submit', submitImageInput);
 
   // Enable webcam
-  $('#webcam-btn').on('click', runWebcam);
+  //$('#webcam-btn').on('click', runWebcam);
 
   // Update threshold value functionality
   $('#threshold-range').on('input', function() {
@@ -321,36 +338,36 @@ $(function() {
   });
 
   // Populate the label icons on page load
-  $.get('/model/labels', function(result) {
-    $.each(result['labels'], function(i, label) {
-      $('#label-icons').append($('<img>', {
-        class: 'label-icon',
-        id: 'label-icon-' + label.id,
-        title: label.name,
-        src: '/img/cocoicons/' + label.id + '.jpg',
-      }));
-    });
+  // $.get('/model/predict', function(result) {
+  //   $.each(result['labels'], function(i, label) {
+  //     $('#label-icons').append($('<img>', {
+  //       class: 'label-icon',
+  //       id: 'label-icon-' + label.id,
+  //       title: label.name,
+  //       src: '/img/cocoicons/' + label.id + '.jpg',
+  //     }));
+  //   });
 
-    // Add an "onClick" for each icon
-    $('.label-icon').on('click', function() {
-      var this_id = $(this).attr('id').match(/\d+$/)[0];
-      if ($(this).hasClass('hide-label')) {
-        $(this).removeClass('hide-label');
-        filter_list.splice(filter_list.indexOf(this_id), 1);
-      } else {
-        $(this).addClass('hide-label');
-        filter_list.push(this_id);
-      }
-      paintCanvas();
-    });
+  //   // Add an "onClick" for each icon
+  //   $('.label-icon').on('click', function() {
+  //     var this_id = $(this).attr('id').match(/\d+$/)[0];
+  //     if ($(this).hasClass('hide-label')) {
+  //       $(this).removeClass('hide-label');
+  //       filter_list.splice(filter_list.indexOf(this_id), 1);
+  //     } else {
+  //       $(this).addClass('hide-label');
+  //       filter_list.push(this_id);
+  //     }
+  //     paintCanvas();
+  //   });
 
-    // Add mouse over for each icon
-    $('.label-icon').hover(function() {
-      highlight = $(this).attr('id').match(/\d+$/)[0];
-      paintCanvas();
-    }, function() {
-      highlight = '';
-      paintCanvas();
-    });
-  });
+  //   // Add mouse over for each icon
+  //   $('.label-icon').hover(function() {
+  //     highlight = $(this).attr('id').match(/\d+$/)[0];
+  //     paintCanvas();
+  //   }, function() {
+  //     highlight = '';
+  //     paintCanvas();
+  //   });
+  // });
 });

@@ -17,8 +17,6 @@ var args = yargs
 
 app.use(bodyParser.urlencoded({extend:true}));
 app.use(express.static('static'));
-// app.engine('html', require('ejs').renderFile);
-// app.set('view engine', 'html');
 app.set('views', 'static/');
 
 app.engine('.ejs', require('ejs').__express);
@@ -43,34 +41,29 @@ const oidc = new ExpressOIDC({
 // ExpressOIDC will attach handlers for the /login and /authorization-code/callback routes
 app.use(oidc.router);
 
-//app.all('*', oidc.ensureAuthenticated());
-
-// app.get('/profile', oidc.ensureAuthenticated(), (req, res) => {
-// 	rp(oktaGetCurrentUser).then(body => {
-// 	     console.log(body);
-// 	 }).catch(err => {
-// 	     console.log(err);
-// 	 });
-//     const userID = req.userContext.userinfo.sub;
-//     res.send(userID);
-//   });
-
-app.get('/', (req, res) => {
-  	if (req.userContext) {
-  		const userID = req.userContext.userinfo.sub;
-		const userURI = ('https://dev-145826.okta.com/api/v1/users/' + userID)
-		const oktaGetCurrentUser = {
+function getOktaApiParams(req, requestType) {
+	var params = '';
+	const userID = req.userContext.userinfo.sub;
+	const userURI = ('https://dev-145826.okta.com/api/v1/users/' + userID);
+	const std_headers = {'Accept':'application/json',
+	                    'Content-Type': 'application/json',
+					    'Authorization': 'SSWS 000NZ7ilEQrvBP8xPtxSimrmp8aSumdAHnbAWZPi1l'
+					   };
+	if (requestType == 'GetCurrentUser'){
+		params = {
 		    method: 'GET',
 		    uri: userURI,
 		    json: true,
-		    headers: {
-		    	'Accept':'application/json',
-		        'Content-Type': 'application/json',
-		        'Authorization': 'SSWS 000NZ7ilEQrvBP8xPtxSimrmp8aSumdAHnbAWZPi1l'
-		    }
+		    headers: std_headers
 		};
+	} 
+	return params;
+}
+
+app.get('/', (req, res) => {
+  	if (req.userContext) {
 		async function oktaGetCurrentUser_response() {
-		    const userInfo = await rp(oktaGetCurrentUser);
+		    const userInfo = await rp(getOktaApiParams(req,'GetCurrentUser'));
 		    res.render("index.ejs", {userContext: req.userContext,
 		    						 userInfo: userInfo,
 		    						});
@@ -87,17 +80,7 @@ app.all('/model/predict', oidc.ensureAuthenticated(), function(req, res) {
 	const userID = req.userContext.userinfo.sub;
 	const userURI = ('https://dev-145826.okta.com/api/v1/users/' + userID)
 
-	const oktaGetCurrentUser = {
-	    method: 'GET',
-	    uri: userURI,
-	    json: true,
-	    headers: {
-	    	'Accept':'application/json',
-	        'Content-Type': 'application/json',
-	        'Authorization': 'SSWS 000NZ7ilEQrvBP8xPtxSimrmp8aSumdAHnbAWZPi1l'
-	    }
-	};
-	return rp(oktaGetCurrentUser).then(body => {
+	return rp(getOktaApiParams(req,'GetCurrentUser')).then(body => {
 		var quota = body.profile.quota;
 		if(quota === undefined){
 			quota = 100
