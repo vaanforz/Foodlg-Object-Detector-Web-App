@@ -1,21 +1,18 @@
 {
-  "name": "max-object-detector-web-app",
+  "name": "foodlg-object-detector-web-app",
   "version": "1.0.0",
-  "description": "A web app utilizing the [MAX Object Detector](https://github.com/IBM/MAX-Object-Detector) model",
+  "description": "Foodlg Web App enabling users to authenticate and query for food object detection and image classification tasks",
   "main": "app.js",
   "scripts": {
     "test": "eslint --ignore-pattern *.min.js ."
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/IBM/MAX-Object-Detector-Web-App.git"
+    "url": "git+https://github.com/vaanforz/Foodlg-Object-Detector-Web-App.git"
   },
-  "author": "Alex Bozarth",
+  "author": "Yi Sen Ng",
   "license": "Apache-2.0",
-  "bugs": {
-    "url": "https://github.com/IBM/MAX-Object-Detector-Web-App/issues"
-  },
-  "homepage": "https://github.com/IBM/MAX-Object-Detector-Web-App#readme",
+  "homepage": "https://github.com/vaanforz/Foodlg-Object-Detector-Web-App#readme",
   "dependencies": {
     "@okta/oidc-middleware": "^3.0.0",
     "body-parser": "^1.19.0",

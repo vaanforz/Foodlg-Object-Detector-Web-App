@@ -5,7 +5,7 @@
 
 // canvas colors
 const COLOR_NORMAL = '#00FF00'; // Lime
-const COLOR_HIGHLIGHT = '#FFFFFF'; // White
+const COLOR_HIGHLIGHT = '#FFCC33'; // Yellow
 const COLOR_TEXT = '#000000'; // Black
 
 // global vars
@@ -117,20 +117,42 @@ function paintLabelText(i, ctx, can) {
   ctx.fillText(text, x + 1, y);
 }
 
-function populateLabelIcons() {
-  var labelIcons_list = [];
+function populateLabelButtons() {
+  var button_style_list = ['primary', 'secondary', 'success',
+                           'danger', 'warning', 'info', 'dark'
+                          ];
+  var labelButtons_list = [];
   for (var i = 0; i < predictions.length; i++) {
     var label_id = predictions[i]['label_id'];
-    if(labelIcons_list.includes(label_id)) {
+    if(labelButtons_list.includes(label_id)) {
       continue;
     } else {
-      labelIcons_list.push(label_id);
-      $('#label-icons').append($('<img>', {
-        class: 'label-icon',
-        id: 'label-icon-' + label_id,
-        title: predictions[i]['label'],
-        src: '/img/cocoicons/' + label_id + '.jpg',
-      }));
+    labelButtons_list.push(label_id);
+    var btn = document.createElement("BUTTON");
+    btn.setAttribute("id", 'label-icon-' + label_id);
+    btn.setAttribute("class", "label-icon btn-xs btn btn-" +
+                     button_style_list[Math.floor(Math.random() * button_style_list.length)]);
+    btn.innerHTML = predictions[i]['label'];
+    btn.onclick = function() {
+      var this_id = $(this).attr('id').match(/\d+$/)[0];
+      if ($(this).hasClass('hide-label')) {
+        $(this).removeClass('hide-label');
+        filter_list.splice(filter_list.indexOf(this_id), 1);
+      } else {
+        $(this).addClass('hide-label');
+        filter_list.push(this_id);
+      }
+      paintCanvas();
+    };
+    btn.onmouseover = function() {
+      highlight = $(this).attr('id').match(/\d+$/)[0];
+      paintCanvas();
+    };
+    btn.onmouseleave = function() {
+      highlight = '';
+      paintCanvas();
+    };
+    document.getElementById("label-icons").appendChild(btn);
     }
   }
 }
@@ -217,67 +239,6 @@ async function submitImageInput(event) {
   }
 }
 
-// Enable the webcam
-function runWebcam() {
-  clearCanvas();
-  var video_html = '<video playsinline autoplay></video>';
-  $('#webcam-video').html(video_html);
-  var video = document.querySelector('video');
-
-  var constraints = {
-    audio: false,
-    video: { width: 9999, height: 9999 },
-  };
-
-  navigator.mediaDevices.getUserMedia(constraints).then(function(stream) {
-    window.stream = stream; // make stream available to browser console
-    video.srcObject = stream;
-  }).catch(function(error) {
-    console.log(error.message, error.name);
-  });
-
-  // Disable image upload
-  $('#file-submit').prop('disabled', true);
-
-  // Reset button
-  $('#webcam-btn').removeClass('btn-primary').addClass('btn-danger shutter-btn')
-    .text('Snap Picture').click(webcamImageInput).off('click', runWebcam);
-}
-
-// Output video frame to canvas and run model
-function webcamImageInput() {
-  var video = document.querySelector('video');
-  $('#image-display').html('<canvas id="image-canvas"></canvas>');
-  var canvas = document.querySelector('#image-canvas');
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
-  canvas.getContext('2d').drawImage(video, 0, 0);
-
-  var img = document.createElement('img');
-  img.id = 'user-image';
-  img.src = canvas.toDataURL();
-  $('#image-display').prepend(img);
-
-  window.stream.getVideoTracks()[0].stop();
-  $('#webcam-video').empty();
-
-  canvas.toBlob(function(blob) {
-    var data = new FormData();
-    data.append('image', blob);
-    data.append('threshold', 0);
-    sendImage(data);
-  });
-
-  paintCanvas();
-
-  // Reset button
-  $('#webcam-btn').removeClass('shutter-btn btn-danger').addClass('btn-primary')
-    .text('New Picture?').off('click', webcamImageInput).click(runWebcam);
-
-  // Re-enable image upload
-  $('#file-submit').prop('disabled', false);
-}
-
 // Send image to model endpoint
 function sendImage(data) {
   $('#file-submit').text('Detecting...');
@@ -293,7 +254,7 @@ function sendImage(data) {
     dataType: 'json',
     success: function(data) {
       predictions = data['predictions'];
-      populateLabelIcons();
+      populateLabelButtons();
       paintCanvas();
       try {
         var quota = document.getElementById('quota').innerText;
@@ -327,9 +288,6 @@ $(function() {
   // Image upload form submit functionality
   $('#file-upload').on('submit', submitImageInput);
 
-  // Enable webcam
-  //$('#webcam-btn').on('click', runWebcam);
-
   // Update threshold value functionality
   $('#threshold-range').on('input', function() {
     $('#threshold-text span').html(this.value);
@@ -337,37 +295,4 @@ $(function() {
     paintCanvas();
   });
 
-  // Populate the label icons on page load
-  // $.get('/model/predict', function(result) {
-  //   $.each(result['labels'], function(i, label) {
-  //     $('#label-icons').append($('<img>', {
-  //       class: 'label-icon',
-  //       id: 'label-icon-' + label.id,
-  //       title: label.name,
-  //       src: '/img/cocoicons/' + label.id + '.jpg',
-  //     }));
-  //   });
-
-  //   // Add an "onClick" for each icon
-  //   $('.label-icon').on('click', function() {
-  //     var this_id = $(this).attr('id').match(/\d+$/)[0];
-  //     if ($(this).hasClass('hide-label')) {
-  //       $(this).removeClass('hide-label');
-  //       filter_list.splice(filter_list.indexOf(this_id), 1);
-  //     } else {
-  //       $(this).addClass('hide-label');
-  //       filter_list.push(this_id);
-  //     }
-  //     paintCanvas();
-  //   });
-
-  //   // Add mouse over for each icon
-  //   $('.label-icon').hover(function() {
-  //     highlight = $(this).attr('id').match(/\d+$/)[0];
-  //     paintCanvas();
-  //   }, function() {
-  //     highlight = '';
-  //     paintCanvas();
-  //   });
-  // });
 });
