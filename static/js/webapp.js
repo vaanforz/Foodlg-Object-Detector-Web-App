@@ -9,7 +9,7 @@ const COLOR_HIGHLIGHT = '#FFCC33'; // Yellow
 const COLOR_TEXT = '#000000'; // Black
 
 // global vars
-var threshold = 0.5;
+var threshold = 0.1;
 var highlight = '';
 var filter_list = [];
 var predictions = [];
@@ -208,7 +208,7 @@ async function submitImageInput(event) {
       var width = img.width;
       var height = img.height;
 
-      if (width > height) {
+      if (width >= height) {
           if (width > MAX_WIDTH) {
               height *= MAX_WIDTH / width;
               width = MAX_WIDTH;
@@ -225,8 +225,8 @@ async function submitImageInput(event) {
       const k = await ctx.drawImage(img, 0, 0, width, height);
 
       var img_dataUrl = await canvas.toDataURL(file.type);
-      var img_html = '<img id="user-image" src="' + img_dataUrl + '" />'
-        + '<canvas id="image-canvas"></canvas>';
+      var img_html = '<img id="user-image" class="shadow p-1 mb-3 bg-white" src="' 
+        + img_dataUrl + '" />' + '<canvas id="image-canvas"></canvas>';
       $('#image-display').html(img_html); // replaces previous img and canvas
 
       var resized_img_blob = await dataURItoBlob(img_dataUrl);
@@ -264,7 +264,7 @@ function sendImage(data) {
 
       }
       if (predictions.length === 0) {
-        alert('No Objects Detected');
+        alert('No Food Objects Detected');
       }
     },
     error: function(jqXHR, status, error) {

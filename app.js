@@ -33,8 +33,8 @@ const oidc = new ExpressOIDC({
   issuer: 'https://dev-145826.okta.com/oauth2/default',
   client_id: '0oa21wafmPNbZLDpa4x6',
   client_secret: 'jJyWxsS8s8yXttXuU0MsPkxh13U8iJi_jreQmtR1',
-  appBaseUrl: 'http://ec2-3-93-15-96.compute-1.amazonaws.com:8090',
-  redirect_uri: 'http://ec2-3-93-15-96.compute-1.amazonaws.com:8090/authorization-code/callback',
+  appBaseUrl: 'http://ec2-52-77-215-17.ap-southeast-1.compute.amazonaws.com:8090',
+  redirect_uri: 'http://ec2-52-77-215-17.ap-southeast-1.compute.amazonaws.com:8090/authorization-code/callback',
   scope: 'openid profile'
 });
 
