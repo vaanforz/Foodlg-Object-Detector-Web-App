@@ -3,19 +3,29 @@
 var request = require('request');
 var yargs = require('yargs');
 var express = require('express');
-var bodyParser = require('body-parser');
 var app = express();
+var bodyParser = require('body-parser');
 
 const rp = require('request-promise');
 const session = require('express-session');
 const { ExpressOIDC } = require('@okta/oidc-middleware');
+const fs = require('fs');
+var model_options = {'null': 'null'};
+fs.readFile('model_options.json', (err, data) => {
+		    if (err) throw err;
+		    model_options = JSON.parse(data);
+});
 
 var args = yargs
   .default('port', 8090)
   .default('model', 'http://localhost:5000')
   .argv;
 
-app.use(bodyParser.urlencoded({extend:true}));
+app.use(bodyParser.json({
+    type: function(req) {
+        return req.get('content-type').indexOf('multipart/form-data') !== 0;
+    },
+}));
 app.use(express.static('static'));
 app.set('views', 'static/');
 
@@ -42,21 +52,23 @@ const oidc = new ExpressOIDC({
 app.use(oidc.router);
 
 function getOktaApiParams(req, requestType) {
-	var params = '';
 	const userID = req.userContext.userinfo.sub;
 	const userURI = ('https://dev-145826.okta.com/api/v1/users/' + userID);
 	const std_headers = {'Accept':'application/json',
 	                    'Content-Type': 'application/json',
 					    'Authorization': 'SSWS 000NZ7ilEQrvBP8xPtxSimrmp8aSumdAHnbAWZPi1l'
 					   };
-	if (requestType == 'GetCurrentUser'){
-		params = {
+	var params = {
 		    method: 'GET',
 		    uri: userURI,
 		    json: true,
 		    headers: std_headers
-		};
-	} 
+	};
+	if (requestType == 'GetCurrentUser'){
+
+	} else if (requestType == 'GetCurrentUserGroups'){
+		params.uri = (userURI + '/groups');
+	}
 	return params;
 }
 
@@ -66,19 +78,22 @@ app.get('/', (req, res) => {
 		    const userInfo = await rp(getOktaApiParams(req,'GetCurrentUser'));
 		    res.render("index.ejs", {userContext: req.userContext,
 		    						 userInfo: userInfo,
+		    						 modelOptions: Object.keys(model_options),
 		    						});
 		}
 		oktaGetCurrentUser_response();
   	} else {
 		    res.render("index.ejs", {userContext: null,
 		    						 userInfo: null,
+		    						 modelOptions: Object.keys(model_options),
 		    						});
   	}
 });
 
 app.all('/model/predict', oidc.ensureAuthenticated(), function(req, res) {
 	const userID = req.userContext.userinfo.sub;
-	const userURI = ('https://dev-145826.okta.com/api/v1/users/' + userID)
+	const userURI = ('https://dev-145826.okta.com/api/v1/users/' + userID);
+	var model_endpoint = model_options[req.query.chosen_model]["endpoint"];
 
 	return rp(getOktaApiParams(req,'GetCurrentUser')).then(body => {
 		var quota = body.profile.quota;
@@ -102,15 +117,46 @@ app.all('/model/predict', oidc.ensureAuthenticated(), function(req, res) {
 		};
 		return rp(oktaUpdateCurrentUserQuota);
 	 }).then(body => {
-	    req.pipe(request(args.model + req.path))
+	    req.pipe(request(model_endpoint + req.path))
 		    .on('error', function(err) {
 		      console.error(err);
 		      res.status(500).send('Error connecting to the model microservice');
 		    })
 		    .pipe(res);
 	 }).catch(err => {
-	     res.status(400).send('Error! Insufficient Quota!');
+	     res.status(400).send(err);
 	 });
+});
+
+app.get('/admin', oidc.ensureAuthenticated(), function(req, res) {
+	fs.readFile('model_options.json', (err, data) => {
+		    if (err) throw err;
+		    model_options = JSON.parse(data);
+	});
+	async function oktaGetCurrentUserGroups_response() {
+		var groups = [];
+	    const userGroupsInfo = await rp(getOktaApiParams(req,'GetCurrentUserGroups'));
+	    for (var i = 0; i < userGroupsInfo.length; i++) {
+	    	groups.push(userGroupsInfo[i].profile.name);
+	    }
+	    if(groups.includes('Admin')) {
+		    res.render("admin.ejs", {userContext: req.userContext,
+		    						 modelOptionsKeys: Object.keys(model_options),
+		    						 modelOptions: model_options,
+		    });
+		} else {
+			res.status(401).send('Error! Unauthorized.');
+		}
+	}
+	oktaGetCurrentUserGroups_response();
+});
+
+app.post('/saveModelJSON', oidc.ensureAuthenticated(), function(req, res) {
+	fs.writeFile('model_options.json', JSON.stringify(req.body), (err) => {  
+    	if (err) throw err;
+    });
+    model_options = req.body;
+    res.send('Success')
 });
 
 oidc.on('ready', () => {

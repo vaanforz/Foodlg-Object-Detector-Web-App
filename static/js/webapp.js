@@ -243,10 +243,11 @@ async function submitImageInput(event) {
 function sendImage(data) {
   $('#file-submit').text('Detecting...');
   $('#file-submit').prop('disabled', true);
+  var chosen_model = document.getElementById('ml_models_dropdown').value;
 
   // Perform file upload
   $.ajax({
-    url: '/model/predict',
+    url: '/model/predict?chosen_model=' + chosen_model,
     method: 'post',
     processData: false,
     contentType: false,

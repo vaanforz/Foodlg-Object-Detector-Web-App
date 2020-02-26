@@ -101,6 +101,13 @@
   <div id="image-upload" class="card">
   <h5 class="card-header h5">Upload an image</h5>
   <div class="card-body">
+    <select id='ml_models_dropdown' class="form-control form-control">
+        <% for(var i=0; i<modelOptions.length; i++) {%>
+          <option><%= modelOptions[i] %></option>
+        <% } %>
+    </select>
+    <br>
+
       <form id="file-upload" enctype="multipart/form-data">
         <div class="form-group">
           <input id="file-input" type="file" name="file" accept=".png, .jpg, .jpeg, .gif" />

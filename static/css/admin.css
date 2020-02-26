@@ -1,0 +1,9 @@
+.table-content {
+        width: 50%;
+        margin: 50px auto;
+        text-align: center;
+    }
+
+    td {
+        width: 200px;
+    }

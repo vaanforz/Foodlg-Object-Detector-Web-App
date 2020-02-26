@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Foodlg Admin</title>
+<link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css'>
+<link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css'>
+<link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css'>
+<link rel="stylesheet" href="/css/style.css">
+
+</head>
+<body>
+<div class="table-content">
+        <table class="table table-borded table-responsive table-striped " id="table-list">
+            <thead class="table-dark">
+                <tr>
+                    <td>Model</td>
+                    <td>Endpoint</td>
+                    <td>Groups</td>
+                    <td>Description</td>
+                </tr>
+            </thead>
+            <tbody>
+                <% for(var i=0; i<modelOptionsKeys.length; i++) {%>
+                    <tr>
+                       <td class="modelName"><%= modelOptionsKeys[i] %></td>
+                       <td class="modelEndpoint"><%= modelOptions[modelOptionsKeys[i]]["endpoint"] %></td>
+                       <td class="modelGroups"><%= modelOptions[modelOptionsKeys[i]]["groups"] %></td>
+                       <td class="modelDesc"><%= modelOptions[modelOptionsKeys[i]]["desc"] %></td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+        <button class="btn btn-info" id="add"><span class="glyphicon glyphicon-plus-sign"></span>Add New Row</button>
+        <button class="btn btn-success" id="submit_model_table">Submit</button>
+    </div>
+
+<script src="/js/jquery-3.3.1.min.js"></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta/js/bootstrap.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
+<script src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js'></script>
+<script src='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js'></script>
+<script src="/js/admin.js"></script>
+
+</body>
+</html>
