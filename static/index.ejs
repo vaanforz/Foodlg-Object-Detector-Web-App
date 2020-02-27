@@ -3,178 +3,178 @@
 
 <head>
 
-  <title>NUS Foodlg</title>
+    <title>NUS Foodlg</title>
 
-  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
 
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-  <link rel="stylesheet" href="/css/webapp.css">
-  <link rel="stylesheet" href="/css/buttons.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/webapp.css">
+    <link rel="stylesheet" href="/css/buttons.css">
 
-  <script src="/js/jquery-3.3.1.min.js"></script>
-  <script src="/js/webapp.js"></script>
+    <script src="/js/jquery-3.3.1.min.js"></script>
+    <script src="/js/webapp.js"></script>
 
 </head>
 
 <body>
-  
-  <nav class="navbar navbar-expand navbar-light bg-light flex-column flex-md-row pipe-navbar justify-md-content-between">
-  <a class="navbar-brand" href="/"><img src="img/nus-logo.svg" width="66" height="30" class="d-inline-block" /> Foodlg Object Detector</a>
 
-  <div class="navbar-nav-scroll ml-md-auto">
-    <ul class="navbar-nav pipe-navbar-nav">
-      <li class="nav-item">
-        <a class="nav-link" href="#" rel="noopener">Tutorials</a>
-      </li>       
-      <li class="nav-item">
-        <a class="nav-link" href="#">Prices</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">Documentation</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#" rel="noopener">AI</a>
-      </li>
+    <nav class="navbar navbar-expand navbar-light bg-light flex-column flex-md-row pipe-navbar justify-md-content-between">
+        <a class="navbar-brand" href="/"><img src="img/nus-logo.svg" width="66" height="30" class="d-inline-block" /> Foodlg Object Detector</a>
 
-        <% if(userContext){ %>
-            <li class="nav-item">
-              <a class="nav-link" href="https://dev-145826.okta.com/enduser/settings" target="_blank" rel="noopener">Account</a>
-            </li>   
-         <% } else{ %>  
-            <li class="nav-item">
-              <a class="nav-link" href="login" target="_self" rel="noopener">Login/ Sign Up</a>
-            </li>   
-        <% } %>
-      
-    </ul>
-  </div>
-  <div>
+        <div class="navbar-nav-scroll ml-md-auto">
+            <ul class="navbar-nav pipe-navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="#" rel="noopener">Tutorials</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Prices</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Documentation</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" rel="noopener">AI</a>
+                </li>
+
+                <% if(userContext){ %>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://dev-145826.okta.com/enduser/settings" target="_blank" rel="noopener">Account</a>
+                    </li>
+                    <% } else{ %>
+                        <li class="nav-item">
+                            <a class="nav-link" href="login" target="_self" rel="noopener">Login/ Sign Up</a>
+                        </li>
+                        <% } %>
+            </ul>
+        </div>
+        <div>
+        </div>
+    </nav>
+
+    <div class="container-fluid ibm-code">
+
+        <div class="row">
+
+            <div class="col-lg-8">
+                <div class="row">
+
+                    <div class="col-sm-6">
+
+                        <div class="card">
+                            <h5 class="card-header h5">Welcome!</h5>
+                            <ul class="list-group list-group-flush">
+
+                                <li class="list-group-item">
+                                    <% if(userContext){ %>
+                                        <%= userContext.userinfo.name %>
+                                            <% } else{ %>
+                                                Please login or sign up!
+                                                <% } %>
+                                </li>
+                            </ul>
+
+                            <% if(userInfo){ %>
+                                <% if(typeof userInfo.profile.quota == 'undefined'){ %>
+
+                                    <% } else if(userInfo.profile.quota == '0'){ %>
+                                        <h5 class="card-header h5">Remaining quota</h5>
+                                        <ul class="list-group list-group-flush">
+                                            <li id="quota" class="list-group-item">0</li>
+                                        </ul>
+                                        <% } else{ %>
+                                            <h5 class="card-header h5">Remaining quota</h5>
+                                            <ul class="list-group list-group-flush">
+                                                <li id="quota" class="list-group-item">
+                                                    <%= userInfo.profile.quota %>
+                                                </li>
+                                            </ul>
+                                            <% } %>
+                                                <% } else{ %>
+
+                                                    <% } %>
+                        </div>
+
+                    </div>
+
+                    <div class="col-sm-6">
+
+                        <div id="image-upload" class="card">
+                            <h5 class="card-header h5">Choose a model</h5>
+                            <div class="card-body">
+                                <select id='ml_models_dropdown' class="form-control form-control">
+                                    <% for(var i=0; i<modelOptions.length; i++) {%>
+                                        <option>
+                                            <%= modelOptions[i] %>
+                                        </option>
+                                        <% } %>
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+
+                <div id="image-upload" class="card">
+                    <h5 class="card-header h5">Upload an image</h5>
+                    <div class="card-body">
+                        <form id="file-upload" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <input id="file-input" type="file" name="file" accept=".png, .jpg, .jpeg, .gif" />
+                            </div>
+                            <button id="file-submit" type="submit" class="btn btn-primary">Submit</button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div id='results_area' class="row">
+            <div class="col-lg-1"></div>
+
+            <div class="col-lg-3">
+
+                <div id="canvas-tools" class="card">
+                    <h5 class="card-header h5">Filter detected objects <span class="info-icon"
+    title="Use the slider to adjust the threshold for displaying detected objects. Lowering the threshold displays objects the model is less certain about. If no bounding boxes are displayed, try lowering the threshold.">&#9432;</span></h5>
+
+                    <div class="card-body">
+                        <div id="threshold-text">
+                            <p class="card-text"><span>10</span>% probability threshold</p>
+                        </div>
+                        <input id="threshold-range" type="range" min="0" max="100" value="10" class="slider">
+                    </div>
+
+                    <h5 class="card-header h5">Labels found <span class="info-icon"
+                    title="Select a label icon to filter any matching detected objects. Hovering over an icon will highlight any matching objects.">&#9432;</span></h5>
+
+                        <div class="card-body">
+                            <div id="label-icons"></div>
+                        </div>
+                </div>
+
+            </div>
+
+            <div class="col-lg-7">
+                <div id="image-display"></div>
+            </div>
+
+            <div class="col-lg-1"></div>
+        </div>
+
+        <div class="push"></div>
+
     </div>
-</nav>
 
-
-
-  <div class="container-fluid ibm-code">
-
-    <div class="row">
-       <div class="col-lg-6">
-         <div class="row">
-
-          <div class="col-sm-6">
-        
-          <div class="card">
-  <h5 class="card-header h5">Welcome!</h5>
-    <ul class="list-group list-group-flush">
-
-      <li class="list-group-item">
-          <% if(userContext){ %>
-            <%= userContext.userinfo.name %>
-         <% } else{ %>  
-           Please login or sign up!
-        <% } %>
-      </li>
-      </ul>
-
-        <% if(userInfo){ %>
-            <% if(typeof userInfo.profile.quota == 'undefined'){ %>
-                 
-             <% } else if(userInfo.profile.quota == '0'){ %>
-               <h5 class="card-header h5">Remaining quota</h5>
-                <ul class="list-group list-group-flush">
-                  <li id="quota" class="list-group-item">0</li>
-                </ul>
-             <% } else{ %>
-                <h5 class="card-header h5">Remaining quota</h5>
-                <ul class="list-group list-group-flush">
-                  <li id="quota" class="list-group-item"><%= userInfo.profile.quota %></li>
-                </ul>
-            <% } %>
-       <% } else{ %>  
-         
-      <% } %>
-  </div>
-          
-        </div>
-
-      <div class="col-sm-6">
-
-  <div id="image-upload" class="card">
-  <h5 class="card-header h5">Upload an image</h5>
-  <div class="card-body">
-    <select id='ml_models_dropdown' class="form-control form-control">
-        <% for(var i=0; i<modelOptions.length; i++) {%>
-          <option><%= modelOptions[i] %></option>
-        <% } %>
-    </select>
-    <br>
-
-      <form id="file-upload" enctype="multipart/form-data">
-        <div class="form-group">
-          <input id="file-input" type="file" name="file" accept=".png, .jpg, .jpeg, .gif" />
-        </div>
-        <button id="file-submit" type="submit" class="btn btn-primary">Submit</button>
-      </form>
-  </div>
-</div>
-      </div>
-      </div>
-      </div>
-
-    <div class="col-lg-6">
-      <div class="row">
-
-      <div class="col-sm-6">
-   <div id="canvas-tools" class="card">
-    <h5 class="card-header h5">Filter detected objects <span class="info-icon"
-            title="Use the slider to adjust the threshold for displaying detected objects. Lowering the threshold displays objects the model is less certain about. If no bounding boxes are displayed, try lowering the threshold.">&#9432;</span></h5>
-
-      <div class="card-body">
-        <div id="threshold-text">
-          <p class="card-text"><span>10</span>% probability threshold</p>        
-        </div>
-        <input id="threshold-range" type="range" min="0" max="100" value="10" class="slider">
-      </div>
-     </div>
-      </div>
-
-      <div class="col-sm-6">
-       <div id="label-filter" class="card">
-        <h5 class="card-header h5">Labels found <span class="info-icon"
-                title="Select a label icon to filter any matching detected objects. Hovering over an icon will highlight any matching objects.">&#9432;</span></h5>
-
-          <div class="card-body">
-            <div id="label-icons"></div>
-          </div>
-
-        </div>
-      </div>
-      </div>
-      </div>
-
-    </div>
-
-    <div class="row">
-
-      <div class="col-lg-12"><br></div>
-
-      <div class="col-lg-12">
-
-        <div id="image-display"></div>
-
-      </div>
-
-    </div>
-
-    <div class="push"></div>
-
-  </div>
-
-  <div id="footer">
     <hr />
-    <p style="float:left">NUS School of Computing</p>
-    <p style="float:right">Source code available on <a href="https://github.com/vaanforz/Foodlg-Object-Detector-Web-App"
-        target="_blank">GitHub</a></p>
-  </div>
+    <div id="footer">
+        <p style="float:left">NUS School of Computing</p>
+        <p style="float:right">Source code available on <a href="https://github.com/vaanforz/Foodlg-Object-Detector-Web-App" target="_blank">GitHub</a></p>
+    </div>
 
 </body>
 

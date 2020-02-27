@@ -227,6 +227,7 @@ async function submitImageInput(event) {
       var img_dataUrl = await canvas.toDataURL(file.type);
       var img_html = '<img id="user-image" class="shadow p-1 mb-3 bg-white" src="' 
         + img_dataUrl + '" />' + '<canvas id="image-canvas"></canvas>';
+      $("#results_area").show();
       $('#image-display').html(img_html); // replaces previous img and canvas
 
       var resized_img_blob = await dataURItoBlob(img_dataUrl);
@@ -295,5 +296,7 @@ $(function() {
     threshold = $('#threshold-range').val() / 100;
     paintCanvas();
   });
+
+  $("#results_area").hide();
 
 });

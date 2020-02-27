@@ -51,7 +51,7 @@ const oidc = new ExpressOIDC({
 // ExpressOIDC will attach handlers for the /login and /authorization-code/callback routes
 app.use(oidc.router);
 
-function getOktaApiParams(req, requestType) {
+function getOktaApiParams(req, requestType, quota=-1) {
 	const userID = req.userContext.userinfo.sub;
 	const userURI = ('https://dev-145826.okta.com/api/v1/users/' + userID);
 	const std_headers = {'Accept':'application/json',
@@ -68,6 +68,8 @@ function getOktaApiParams(req, requestType) {
 
 	} else if (requestType == 'GetCurrentUserGroups'){
 		params.uri = (userURI + '/groups');
+	} else if (requestType == 'DeductUserQuotaBy1') {
+		params.body = {"profile": {"quota": (quota-1)}};
 	}
 	return params;
 }
@@ -91,31 +93,14 @@ app.get('/', (req, res) => {
 });
 
 app.all('/model/predict', oidc.ensureAuthenticated(), function(req, res) {
-	const userID = req.userContext.userinfo.sub;
-	const userURI = ('https://dev-145826.okta.com/api/v1/users/' + userID);
 	var model_endpoint = model_options[req.query.chosen_model]["endpoint"];
 
 	return rp(getOktaApiParams(req,'GetCurrentUser')).then(body => {
 		var quota = body.profile.quota;
 		if(quota === undefined){
-			quota = 100
+			quota = 500
 		}
-		const oktaUpdateCurrentUserQuota = {
-		    method: 'POST',
-		    uri: userURI,
-		    json: true,
-		    headers: {
-		    	'Accept':'application/json',
-		        'Content-Type': 'application/json',
-		        'Authorization': 'SSWS 000NZ7ilEQrvBP8xPtxSimrmp8aSumdAHnbAWZPi1l'
-		    },
-		    body: {
-		    "profile": {
-		    	"quota": (quota-1),
-		    }
-		  }
-		};
-		return rp(oktaUpdateCurrentUserQuota);
+		return rp(getOktaApiParams(req,'DeductUserQuotaBy1',quota));
 	 }).then(body => {
 	    req.pipe(request(model_endpoint + req.path))
 		    .on('error', function(err) {
