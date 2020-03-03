@@ -176,13 +176,13 @@ function TableToJSON(tabId) {
     var data = {};
     var $tab_en_edic = $("#" + tabId);  
     $tab_en_edic.find('tbody tr').each(function() {
-       var modelName = $(this).find('.modelName').html();
-       var modelEndpoint = $(this).find('.modelEndpoint').html();
-       var modelGroups = $(this).find('.modelGroups').html();
-       var modelDesc = $(this).find('.modelDesc').html();
-       data[String(modelName)] = {"endpoint":String(modelEndpoint),
-                          "groups":String(modelGroups),
-                          "desc":String(modelDesc)
+       var modelName = $(this).find('.modelName').html().trim();
+       var modelEndpoint = $(this).find('.modelEndpoint').html().trim();
+       var modelGroups = $(this).find('.modelGroups').html().trim();
+       var modelDesc = $(this).find('.modelDesc').html().trim();
+       data[modelName] = {"endpoint":modelEndpoint,
+                          "groups":modelGroups,
+                          "desc":modelDesc
                          }
     });
     $.ajax({

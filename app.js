@@ -74,20 +74,40 @@ function getOktaApiParams(req, requestType, quota=-1) {
 	return params;
 }
 
+function getUserModelAccess(userGroupsInfo = null){
+	var userGroups = [];
+	var models = [];
+	if(userGroupsInfo){
+	    for (var i = 0; i < userGroupsInfo.length; i++) {
+	    	userGroups.push((userGroupsInfo[i].profile.name).toLowerCase());
+	    }
+	}
+	for (let model_name of Object.keys(model_options)){
+		for (let model_group of model_options[model_name]["groups"].split(";")){
+			if(model_group.trim()=='' || userGroups.includes(model_group.toLowerCase().trim())){
+				models.push(model_name);
+				break;
+			}
+		}
+	}
+    return models;
+}
+
 app.get('/', (req, res) => {
   	if (req.userContext) {
 		async function oktaGetCurrentUser_response() {
 		    const userInfo = await rp(getOktaApiParams(req,'GetCurrentUser'));
+		    const userGroupsInfo = await rp(getOktaApiParams(req,'GetCurrentUserGroups'));
 		    res.render("index.ejs", {userContext: req.userContext,
 		    						 userInfo: userInfo,
-		    						 modelOptions: Object.keys(model_options),
+		    						 modelOptions: getUserModelAccess(userGroupsInfo),
 		    						});
 		}
 		oktaGetCurrentUser_response();
   	} else {
 		    res.render("index.ejs", {userContext: null,
 		    						 userInfo: null,
-		    						 modelOptions: Object.keys(model_options),
+		    						 modelOptions: getUserModelAccess(),
 		    						});
   	}
 });
