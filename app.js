@@ -69,6 +69,7 @@ function getOktaApiParams(req, requestType, quota=-1) {
 	} else if (requestType == 'GetCurrentUserGroups'){
 		params.uri = (userURI + '/groups');
 	} else if (requestType == 'DeductUserQuotaBy1') {
+		params.method = 'POST';
 		params.body = {"profile": {"quota": (quota-1)}};
 	}
 	return params;
